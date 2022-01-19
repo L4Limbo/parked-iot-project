@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'parked_iot_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'URL': env('DATABASE_URL'),
+        'URL': env("DATABASE_URL")
     }
 }
 
