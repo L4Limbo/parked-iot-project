@@ -49,7 +49,7 @@ def registerUser(request):
         print(request.POST.get('password'))
         u.set_password(request.POST.get('password'))
         u.save()
-        token = Token.objects.create(user=u)
+        token = Token.objects.get_or_create(user=user)
 
         return JsonResponse({'status': "user added", 'token':str(token[0])})
 
