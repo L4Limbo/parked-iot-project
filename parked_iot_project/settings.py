@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import environ
+#import rest_framework
 
 env = environ.Env()
 # reading .env file
@@ -43,13 +44,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'rest_framework.authtoken',
+    'apps.spots',
+    'apps.usersign'
 ]
+
+AUTH_USER_MODEL = 'usersign.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -60,7 +66,7 @@ MIDDLEWARE = [
 # CORS_ORIGIN_WHITELIST = (
 #   'https://parked-iot-project.herokuapp.com/',
 # )
-CSRF_TRUSTED_ORIGINS = ['https://parked-iot-project.herokuapp.com']
+#CSRF_TRUSTED_ORIGINS = ['https://parked-iot-project.herokuapp.com']
 
 
 ROOT_URLCONF = 'parked_iot_project.urls'
@@ -84,13 +90,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'parked_iot_project.wsgi.application'
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'URL': env("DATABASE_URL")
+        'HOST': env('DB_HOST'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASS'),
+        'PORT': 5432,
     }
 }
 
@@ -135,6 +155,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 import django_heroku
 django_heroku.settings(locals())
