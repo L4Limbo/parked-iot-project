@@ -95,3 +95,9 @@ def savedata(request):
 
         sentData = Getdata.objects.create(datatext =st)
     return render(request,'spots/hi.html')
+
+def getmarkers(request):
+    if request.method == 'POST':
+        if 'gpsLong' not in request.POST and 'gpsLat' not in request.POST:
+            return JsonResponse({'Error': "Please send gps longtitute and latitude [as gpsLong and gpsLat], optionally send maxDist, type of vehicle, ramp and zoom."})
+        return JsonResponse({'1':{'lat':38.268973, 'long':21.748207, 'dist':30, 'type':'car', 'ramp':0}, '2':{'lat':38.268988, 'long':21.748979, 'dist':35, 'type':'van', 'ramp':1}})
