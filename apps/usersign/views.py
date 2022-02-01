@@ -24,13 +24,17 @@ def loginUser(request):
             print ('User does not exist')
 
         user = authenticate(username=email, password=password)
-        #print(user.id)
 
         if user is not None:
             login(request, user)
             token = Token.objects.get_or_create(user=user)
             print(token[0])
-            return JsonResponse({'status': "user logged in", 'token':str(token[0])})
+            response = JsonResponse({'status': "user logged in", 'token':str(token[0])})
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+            response["Access-Control-Max-Age"] = "1000"
+            response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+            return response
         else:
             messages.error(request, 'Username OR password does not exit')
 
@@ -51,7 +55,12 @@ def registerUser(request):
         u.save()
         token = Token.objects.get_or_create(user=u)
 
-        return JsonResponse({'status': "user added", 'token':str(token[0])})
+        response = JsonResponse({'status': "user added", 'token':str(token[0])})
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+        response["Access-Control-Max-Age"] = "1000"
+        response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+        return response
 
     return {'status':'Only post requests accepted'}
 
