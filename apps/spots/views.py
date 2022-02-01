@@ -1,19 +1,24 @@
 from django.shortcuts import render
 from .models import Organization, Parkingspot, Catparking, PublicUser, Getdata
 from django.http import JsonResponse
-
+import requests
+from django.http import HttpResponse
 # Create your views here.
 def availableseats(request):
     #print("hi1")
     #print(Organization.objects.values_list(orgname))
     #print(*Organization._meta.get_fields(),)
     #print(Organization.orgname)
+    
     if request.method == 'POST':
         parks =  Parkingspot.objects.all()
         for p in parks:
-            p.spotlat = 43
-            p.save()
-            print(p.spotlat, p.spotlong)
+            if(p.status=='free'):
+                print(p.spotlat, p.spotlong)
+                catp = p.catid
+                buildp = catp.orgid
+                print(sp.name)
+
     return render(request,'spots/hi.html')
 
 def saveseat(request):
@@ -88,16 +93,20 @@ def savedata(request):
     if request.method == 'POST':
         st = ''
         val = {}
-        for key, value in request.POST.items():
-            st += (' Key:' + key)
-            st += (' Value:' + value)
-            val[key] = value
 
+        st += str(request.body)
+
+        #st += request.META['QUERY_STRING']
+        #print(HttpResponse(request.POST.items()))
+        #print(request.META.items())
+        print(st)
         sentData = Getdata.objects.create(datatext =st)
     return render(request,'spots/hi.html')
+
+
 
 def getmarkers(request):
     if request.method == 'POST':
         if 'gpsLong' not in request.POST and 'gpsLat' not in request.POST:
             return JsonResponse({'Error': "Please send gps longtitute and latitude [as gpsLong and gpsLat], optionally send maxDist, type of vehicle, ramp and zoom."})
-        return JsonResponse({'1':{'lat':38.268973, 'long':21.748207, 'dist':30, 'type':'car', 'ramp':0}, '2':{'lat':38.268988, 'long':21.748979, 'dist':35, 'type':'van', 'ramp':1}})
+        return JsonResponse({'1':{'lat':38.268973, 'lng':21.748207, 'dist':30, 'type':'car', 'ramp':0}, '2':{'lat':38.268988, 'lng':21.748979, 'dist':35, 'type':'van', 'ramp':1}})
