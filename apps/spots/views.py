@@ -148,8 +148,7 @@ def savedata(request):
     if request.method == 'POST':
         ans = json.loads(request.body)
         st = ans['data']
-        test = ' '.join([ str(ord(c)) for c in st.decode('base64') ])
-        sentData = Getdata.objects.create(datatext =test)
+        sentData = Getdata.objects.create(datatext =st)
     return render(request,'spots/hi.html')
 
 def getTestMarkers(request):
