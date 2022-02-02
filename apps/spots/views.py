@@ -75,6 +75,7 @@ def saveseat(request):
         try:
             sp = Parkingspot.objects.get(spotid=spot_id)
             #print(sp.spotid)
+            print(distance(gps_lat, sp.spotlat, gps_long, sp.spotlong))
             if((sp.status == 'free' or sp.status == 'unknown') and distance(gps_lat, sp.spotlat, gps_long, sp.spotlong)<0.01):
                 sp.status = 'occupied'
                 sp.save()
