@@ -86,7 +86,7 @@ def saveseat(request):
             else:
                 responseData = {
                     'id': spot_id,
-                    'status': 'Taken',
+                    'status': 'Wrong Coordinates',
                 }
 
         except Exception as e:
