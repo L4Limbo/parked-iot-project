@@ -81,8 +81,18 @@ def authimage(request):
         if user is not None:
             user.authcard = request.POST.get('image')
             user.save()
-            return JsonResponse({'status': "Image saved"})
-        return JsonResponse({'status': "oops this user does not exist"})
+            response = JsonResponse({'status': "Image saved"})
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+            response["Access-Control-Max-Age"] = "1000"
+            response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+            return response
+        response = JsonResponse({'status': "oops this user does not exist"})
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+        response["Access-Control-Max-Age"] = "1000"
+        response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+        return response
 
 
 @api_view(['GET'])
