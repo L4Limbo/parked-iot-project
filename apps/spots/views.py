@@ -66,7 +66,6 @@ def availableseats(request):
     response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
     return response
 
-
 def saveseat(request):
     if request.method == 'POST':
         spot_id = request.POST.get('spot_id')
@@ -147,9 +146,55 @@ def change(request, new_status):
 def savedata(request):
     if request.method == 'POST':
         ans = json.loads(request.body)
+        
         st = ans['data']
+        #id = ans['applicationName'] κανονικα θα ειχαμε αυτο ομως επειδη στο testing 
+        #εχουμε ενα αρντουινο και οχι ελεγχο πανω στo forwarding δεδομενων θα το ορισουμε 
+        #ξεχωριστα από κατω κάνοντας force το id
+        id = 1
         sentData = Getdata.objects.create(datatext =st)
-    return render(request,'spots/hi.html')
+        spot_id = id
+        if st[0] == 'A':
+            new_status = 'free'
+        else:
+            new_status = 'unknown' 
+        try:
+            sp = Parkingspot.objects.get(spotid=spot_id)
+            if(sp.status == 'free' and new_status=='unknown'):
+                sp.status = 'unknown'
+                sp.save()
+                responseData = {
+                    'id': spot_id,
+                    'status': 'Changed to unknown',
+                }
+            elif (sp.status == 'occupied' and new_status=="free"):
+                sp.status = 'free'
+                sp.save()                
+                responseData = {
+                    'id': spot_id,
+                    'status': 'Changed to free',
+                }
+            elif (sp.status == 'unknown' and new_status=="free"):
+                sp.status = 'free'
+                sp.save()                
+                responseData = {
+                    'id': spot_id,
+                    'status': 'Changed to free from unknown',
+                }
+            else:
+                responseData = {
+                    'id': spot_id,
+                    'status': "No changes detected",
+                }
+
+        except Exception as e:
+            responseData = {
+                'id': spot_id,
+                'status': new_status,
+                'error': str(e)
+            }
+        
+    return JsonResponse(responseData)
 
 def getTestMarkers(request):
     if request.method == 'POST':

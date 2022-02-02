@@ -64,6 +64,27 @@ def registerUser(request):
 
     return {'status':'Only post requests accepted'}
 
+def authimage(request):
+    if request.method == 'POST':
+        email = request.POST.get('email').lower()
+        password = request.POST.get('password')
+        print(request.POST.get('password'))
+
+        try:
+            user = User.objects.get(email=email)
+            print(user.id)
+        except:
+            print ('User does not exist')
+
+        user = authenticate(username=email, password=password)
+
+        if user is not None:
+            user.authcard = request.POST.get('image')
+            user.save()
+            return JsonResponse({'status': "Image saved"})
+        return JsonResponse({'status': "oops this user does not exist"})
+
+
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def testPermission(request):
