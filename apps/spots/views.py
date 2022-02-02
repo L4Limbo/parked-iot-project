@@ -3,7 +3,7 @@ from .models import Organization, Parkingspot, Catparking, PublicUser, Getdata
 from django.http import JsonResponse
 import requests
 from django.http import HttpResponse
-
+import json
 from math import radians, cos, sin, asin, sqrt
 def distance(lat1, lat2, lon1, lon2):
     lon1 = radians(lon1)
@@ -146,12 +146,10 @@ def change(request, new_status):
 
 def savedata(request):
     if request.method == 'POST':
-        st = ''
-        st += str(request.body)
+        ans = json.loads(request.body)
+        st = ans['data']
         sentData = Getdata.objects.create(datatext =st)
     return render(request,'spots/hi.html')
-
-
 
 def getTestMarkers(request):
     if request.method == 'POST':
